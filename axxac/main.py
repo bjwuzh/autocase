@@ -34,11 +34,7 @@ def run(argv, help_info):
 
 
 if __name__ == '__main__':
-    # run(sys.argv, HELP)
-    case_config_file = 'C:\\Users\Administrator\Desktop\data\case配置.xls'
-    login_config_file = 'C:\\Users\Administrator\Desktop\data\登录接口配置.xls'
-    output_dir = './output'
-    execute(case_config_file, login_config_file, output_dir)
+    run(sys.argv, HELP)
 
 
 def cmdexe():
