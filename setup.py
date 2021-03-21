@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='axxac',
-      version='1.0.0',
+      version='1.0.1',
       description='Generate case list and itest json automatically.',
       url='https://github.com/bjwuzh/autocase.git',
       author='bjwuzh',

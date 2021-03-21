@@ -5,7 +5,8 @@ python setup.py sdist bdist_wheel
 twine upload dist/*
 
 二、axxac命令安装:
-pip3 install axxac
+首次安装：pip3 install axxac
+更新：pip3 install axxac --upgrade
 
 三、执行axxac命令
 axxac -c <case_config_file> -l <login_config_file> -o <output_directory>

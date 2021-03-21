@@ -3,7 +3,7 @@ import sys
 import getopt
 from axxac.auto_case import execute
 
-HELP = 'python ac.py -c <case_config_file> -l <login_config_file> -o <output_directory>'
+HELP = 'Usage:\n  axxac -c <case_config_file> -l <login_config_file> -o <output_directory>'
 
 
 def run(argv, help_info):
