@@ -1,0 +1,134 @@
+{
+	"scenarios": [{
+		"headers": [
+			{
+				"name": "header变量[脚本写入]",
+				"value": "header值[脚本写入]",
+				"enable": true,
+				"encode": true,
+				"file": false,
+				"required": true,
+				"valid": true
+			}
+		],
+		"requests": [{
+			"type": "HTTP",
+			"name": "登录接口名[脚本写入]",
+			"enable": true,
+			"assertions": {
+				"jsonPath": [
+					{
+						"type": "JSON",
+						"expression": "字段表达式[脚本写入]",
+						"expect": "预期结果[脚本写入]",
+						"description": "自定义描述[脚本写入]"
+					}
+				]
+			},
+			"extract": {
+				"json": [
+					{
+						"type": "JSONPath",
+						"variable": "变量名[脚本写入]",
+						"value": "变量值[脚本写入]",
+						"expression": "表达式[脚本写入]"
+					}
+				]
+			},
+			"url": "接口路径[脚本写入]",
+			"method": "POST",
+			"parameters": [
+				{
+					"type": "text",
+					"enable": true,
+					"contentType": "text/plain",
+					"encode": true,
+					"file": false,
+					"required": true,
+					"valid": false
+				}
+			],
+			"headers": [
+				{
+					"name": "变量名称[脚本写入]",
+					"value": "变量值[脚本写入]",
+					"enable": true,
+					"encode": true,
+					"file": false,
+					"required": true,
+					"valid": true
+				}
+			],
+			"body": {
+				"type": "Raw",
+				"raw": "参数[脚本写入]",
+				"kvs": [
+					{
+						"type": "text",
+						"enable": true,
+						"contentType": "text/plain",
+						"encode": true,
+						"file": false,
+						"required": true,
+						"valid": false
+					}
+				],
+				"format": "text",
+				"json": false,
+				"kV": false,
+				"oldKV": false,
+				"valid": true,
+				"xml": false
+			}
+		},{
+			"type": "HTTP",
+			"name": "场景名称[脚本写入]",
+			"enable": true,
+			"assertions": {
+				"jsonPath": [{
+					"type": "JSON",
+					"expression": "字段表达式[脚本写入]",
+					"expect": "预期结果[脚本写入]",
+					"description": "自定义描述[脚本写入]"
+				}]
+			},
+			"url": "接口路径[脚本写入]",
+			"method": "POST",
+			"parameters": [{
+				"type": "text",
+				"enable": true,
+				"contentType": "text/plain",
+				"encode": true,
+				"file": false,
+				"required": true,
+				"valid": false
+			}],
+			"headers": [{
+				"enable": true,
+				"encode": true,
+				"file": false,
+				"required": true,
+				"valid": false
+			}],
+			"body": {
+				"type": "Raw",
+				"raw": "参数[脚本写入]",
+				"kvs": [{
+					"type": "text",
+					"enable": true,
+					"contentType": "text/plain",
+					"encode": true,
+					"file": false,
+					"required": true,
+					"valid": false
+				}],
+				"format": "json",
+				"json": false,
+				"kV": false,
+				"oldKV": true,
+				"valid": false,
+				"xml": false
+			}
+		}]
+	}]
+}
