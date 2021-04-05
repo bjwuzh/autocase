@@ -37,16 +37,17 @@
 			},
 			"url": "接口路径[脚本写入]",
 			"method": "POST",
-			"parameters": [
-				{
-					"type": "text",
-					"enable": true,
-					"contentType": "text/plain",
-					"encode": true,
-					"file": false,
-					"required": true,
-					"valid": false
-				}
+			"parameters": [{
+				"name": "query参数名[脚本写入]",
+				"value": "query参数值[脚本写入]",
+				"type": "text",
+				"enable": true,
+				"contentType": "text/plain",
+				"encode": true,
+				"file": false,
+				"required": true,
+				"valid": true
+			}
 			],
 			"headers": [
 				{

@@ -3,7 +3,7 @@ import sys
 import getopt
 from axxac.auto_case import execute
 
-HELP = 'Usage:\n  axxac -c <case_config_file> -l <login_config_file> -o <output_directory>'
+HELP = 'Usage:\n  axxac -i <input_directory> -o <output_directory>'
 
 
 def run(argv, help_info):
@@ -11,8 +11,7 @@ def run(argv, help_info):
     if len(argv) == 0:
         print(help_info)
         sys.exit()
-    case_config_file = ''
-    login_config_file = ''
+    input_dir = ''
     output_dir = ''
     try:
         opts, args = getopt.getopt(argv, "hc:l:o:")
@@ -23,18 +22,17 @@ def run(argv, help_info):
         if opt == '-h':
             print(help_info)
             sys.exit()
-        elif opt == "-c":
-            case_config_file = arg
-        elif opt == "-l":
-            login_config_file = arg
+        elif opt == "-i":
+            input_dir = arg
         elif opt == "-o":
             output_dir = arg
 
-    execute(case_config_file, login_config_file, output_dir)
+    execute(input_dir, output_dir)
 
 
 if __name__ == '__main__':
-    run(sys.argv, HELP)
+    execute("../data", "../output/")
+    # run(sys.argv, HELP)
 
 
 def cmdexe():

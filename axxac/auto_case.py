@@ -1,10 +1,10 @@
 # coding=utf-8
 from axxac.generate_case_list import generate as clg
 from axxac.generate_itest_json import generate as ijg
-from axxac.read_login_config import read_excel
+from axxac.require import generate_require_items
+from axxac.path_tool import get_cases_dir, get_requires_dir
 
-
-def execute(case_config_file, login_config_file, output_dir):
-    case_list = clg(case_config_file, output_dir)
-    login_config = read_excel(login_config_file)
-    ijg(case_list, login_config, output_dir)
+def execute(input_dir, output_dir):
+    case_result_json = clg(get_cases_dir(input_dir), output_dir)
+    require_items = generate_require_items(get_requires_dir(input_dir))
+    ijg(case_result_json, require_items, output_dir)

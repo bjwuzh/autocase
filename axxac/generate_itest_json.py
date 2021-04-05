@@ -1,6 +1,5 @@
 # coding=utf-8
 import json
-import os
 from collections import OrderedDict
 from axxac.path_tool import *
 
@@ -32,6 +31,25 @@ def get_header_list(header):
     return header_list
 
 
+def get_query_list(query):
+    query_list = []
+    for query_item in query:
+        query_list.append(
+            {
+                "name": str(query_item[0]),
+                "value": str(query_item[1]),
+                "type": "text",
+                "enable": True,
+                "contentType": "text/plain",
+                "encode": True,
+                "file": False,
+                "required": True,
+                "valid": True
+            }
+        )
+    return query_list
+
+
 def get_assert_list(the_assert):
     assert_list = []
     for assert_item in the_assert:
@@ -44,22 +62,6 @@ def get_assert_list(the_assert):
             }
         )
     return assert_list
-
-
-def get_extract_list(extract):
-    extract_list = []
-    for extract_item in extract:
-        extract_list.append(
-            {
-                "type": "JSONPath",
-                "variable": str(extract_item[0]),
-                "value": "${"+str(extract_item[0])+"}",
-                "expression": str(extract_item[1]),
-                "multipleMatching": False,
-                "valid": True
-            }
-        )
-    return extract_list
 
 
 def generate_header_item(row):
@@ -75,78 +77,23 @@ def generate_header_item(row):
     return request_item
 
 
-def generate_login_item(login_config):
-    config = login_config['config']
-    header = login_config['header']
-    a_assert = login_config['assert']
-    extract = login_config['extract']
-
-    name = config[0]
-    url = config[1]
-    username = config[2]
-    password = config[3]
-
-    assert_list = get_assert_list(a_assert)
-    extract_list = get_extract_list(extract)
-    header_list = get_header_list(header)
-
-    raw = {
-        "type": 'oa',
-        "rememberMe": False,
-        "username": username,
-        "password": password
-    }
-
-    # itest平台原因，需要保持request顺序才能正常解析
-    item = OrderedDict([
-        ("type", "HTTP"),
-        ("name", name),
-        ("enable", True),
-        ("assertions", {
-            "jsonPath": assert_list
-        }),
-        ("extract", {
-            "json": extract_list
-        }),
-        ("url", url),
-        ("method", "POST"),
-        ("parameters", [{
-            "type": "text",
-            "enable": True,
-            "contentType": "text/plain",
-            "encode": True,
-            "file": False,
-            "required": True,
-            "valid": False
-        }]),
-        ("headers", header_list),
-        ("body", {
-            "type": "Raw",
-            "raw": json.dumps(raw, indent=4, ensure_ascii=False),
-            "kvs": [{
-                "type": "text",
-                "enable": True,
-                "contentType": "text/plain",
-                "encode": True,
-                "file": False,
-                "required": True,
-                "valid": False
-            }],
-            "format": "text",
-            "json": False,
-            "kV": False,
-            "oldKV": False,
-            "valid": True,
-            "xml": False
-        })
-    ])
-    return item
+def is_json_str(object):
+    try:
+        json.loads(object)
+    except ValueError:
+        return False
+    return True
 
 
-def generate_request_item(header, row, the_assert):
+def generate_request_item(method, query, title, row, the_assert):
+    query_list = get_query_list(query)
+
     raw = dict()
     for i in range(5, len(row)):
-        raw[header[i]] = row[i]
+        value = row[i]
+       # if is_json_str(value):
+            # value = json.loads(value) # 如果是json字符串，转成json对象
+        raw[title[i]] = value
 
     assert_list = get_assert_list(the_assert)
 
@@ -159,16 +106,8 @@ def generate_request_item(header, row, the_assert):
             "jsonPath": assert_list
         }),
         ("url", row[1]),
-        ("method", "POST"),
-        ("parameters", [{
-            "type": "text",
-            "enable": True,
-            "contentType": "text/plain",
-            "encode": True,
-            "file": False,
-            "required": True,
-            "valid": False
-        }]),
+        ("method", method),
+        ("parameters", query_list),
         ("headers", [{
             "enable": True,
             "encode": True,
@@ -199,9 +138,11 @@ def generate_request_item(header, row, the_assert):
     return item
 
 
-def generate(result_json, login_config, output_dir):
-    case_list = result_json['case_list']
+def generate(result_json, require_items, output_dir):
+    method = result_json['method']
+    query = result_json['query']
     header = result_json['header']
+    case_list = result_json['case_list']
     normal_assert = result_json['normal_assert']
     fail_assert = result_json['fail_assert']
 
@@ -217,13 +158,13 @@ def generate(result_json, login_config, output_dir):
 
     # 每一条case
     case_items = list()
-    if login_config:
-        case_items.append(generate_login_item(login_config))
+    if require_items:
+        case_items.extend(require_items)
 
     for row_num in range(1, len(case_list)):
         is_normal = row_num == 1
         the_assert = normal_assert if is_normal else fail_assert
-        case_item = generate_request_item(case_list[0], case_list[row_num], the_assert)
+        case_item = generate_request_item(method, query, case_list[0], case_list[row_num], the_assert)
         case_items.append(case_item)
         itest_json['scenarios'][0]['requests'] = case_items # itest格式item数组下只取1个元素
 

@@ -1,7 +1,11 @@
 【使用说明】
 
-一、pip发布:
+〇、生成发布文件：
 python setup.py sdist bdist_wheel
+
+本地安装测试 pip3 install dist/axxac-1.1.0-py3-none-any.whl
+
+一、pip发布:
 twine upload dist/*
 
 二、axxac命令安装:
@@ -9,11 +13,21 @@ twine upload dist/*
 更新：pip3 install axxac --upgrade
 
 三、执行axxac命令
-axxac -c <case_config_file> -l <login_config_file> -o <output_directory>
+axxac -i <input_directory> -o <output_directory>
 
--c case配置文件路径
--l 登录接口配置文件路径
--o
- case用例表格及itest json文件输出目录
+-i case配置及依赖配置文件目录（该目录下必须包含cases和requires目录，目录下为对应配置文件）
+-o case用例表格及itest json文件输出目录
 
-例如：axxac -c ./data/case配置.xls -l ./data/登录接口配置.xls -o ./output
+
+例如：axxac -i ./data -o ./output
+
+目录结构：
+---data
+------cases
+---------case.xls
+------requires
+---------1-login.xls
+---------2-login.xls
+---------3-login.xls
+
+备注：requires目录下文件为依赖配置文件（如登录接口），文件名必须按依赖顺序由小到大命排序，命名规范为“数字-xxx.xls”

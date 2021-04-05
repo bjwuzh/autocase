@@ -23,25 +23,35 @@ def get_normal_values(params):
         normal_values.append(values[0])
     return normal_values
 
+def get_src_file(case_dir):
+    # 目前只支持第一个文件
+    items = os.listdir(case_dir)
+    for item in items:
+        path = os.path.join(case_dir, item)
+        if os.path.isfile(path):
+            return path
+    return ''
 
-def generate(src_file, output_dir):
+def generate(cases_dir, output_dir):
     origin_header = ['接口名称', '接口', '测试场景', '是否完成', '编写完成日期']
     header = []
     header.extend(origin_header)
     case_list = [header]
-    src_json = read_case_config.read_excel(src_file)
+    src_json = read_case_config.read_excel(get_src_file(cases_dir))
     api_name = src_json['name']
     url = src_json['url']
-    params = src_json['params']
+    method = src_json['method']
+    query = src_json['query']
+    body = src_json['body']
     request_header = src_json['header']
     normal_assert = src_json['normal_assert']
     fail_assert = src_json['fail_assert']
 
-    normal_values = get_normal_values(params)
+    normal_values = get_normal_values(body)
     param_parts = [['所有参数都正确', normal_values]]  # 第一个元素为场景名
 
-    for i in range(len(params)):
-        param = params[i]
+    for i in range(len(body)):
+        param = body[i]
         name = param['name']
         header.append(name)
 
@@ -71,9 +81,11 @@ def generate(src_file, output_dir):
     write_excel_xls(path, 'sheet1', case_list)
     print("\n测试用例表格已生成："+os.path.abspath(path)+"\n")
 
-    # 加上请求头、断言信息，用于itest json生成
+    # 加上请求方法、请求头、断言信息，用于itest json生成
     result_json = {
         "case_list": case_list,
+        "method": method,
+        "query": query,
         "header": request_header,
         "normal_assert": normal_assert,
         "fail_assert": fail_assert
