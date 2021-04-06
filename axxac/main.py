@@ -14,7 +14,7 @@ def run(argv, help_info):
     input_dir = ''
     output_dir = ''
     try:
-        opts, args = getopt.getopt(argv, "hc:l:o:")
+        opts, args = getopt.getopt(argv, "hi:o:")
     except getopt.GetoptError:
         print(help_info)
         sys.exit()

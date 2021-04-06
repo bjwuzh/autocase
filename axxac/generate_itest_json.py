@@ -91,8 +91,8 @@ def generate_request_item(method, query, title, row, the_assert):
     raw = dict()
     for i in range(5, len(row)):
         value = row[i]
-       # if is_json_str(value):
-            # value = json.loads(value) # 如果是json字符串，转成json对象
+        if is_json_str(value):
+            value = json.loads(value) # 如果是json字符串，转成json对象
         raw[title[i]] = value
 
     assert_list = get_assert_list(the_assert)
