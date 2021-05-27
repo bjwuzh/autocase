@@ -25,29 +25,26 @@ def get_header_list(header):
                 "encode": True,
                 "file": False,
                 "required": True,
-                "valid": True
+                "valid": True,
+                "contentType": "",
+                "description": ""
             }
         )
     return header_list
 
 
-def get_query_list(query):
-    query_list = []
-    for query_item in query:
-        query_list.append(
+def get_extract_list(extract):
+    extract_list = []
+    for header_item in extract:
+        header_item.append(
             {
-                "name": str(query_item[0]),
-                "value": str(query_item[1]),
-                "type": "text",
-                "enable": True,
-                "contentType": "text/plain",
-                "encode": True,
-                "file": False,
-                "required": True,
-                "valid": True
+                "type": "JSONPath",
+                "variable": str(header_item[0]),
+                "value": str(header_item[1]),
+                "expression": "获取"+str(header_item[0])
             }
         )
-    return query_list
+    return extract_list
 
 
 def get_assert_list(the_assert):
@@ -77,6 +74,26 @@ def generate_header_item(row):
     return request_item
 
 
+def generate_extract_item(row):
+    extract_item = OrderedDict([
+        ("type","JSONPath"),
+        ("variable",row[0]),
+        ("value", row[1]),
+        ("expression","获取"+row[0])
+    ])
+    return extract_item
+
+
+def generate_extract_item_null():
+    extract_item = OrderedDict([
+        ("type","JSONPath"),
+        ("variable",""),
+        ("value", ""),
+        ("expression","")
+    ])
+    return extract_item
+
+
 def is_json_str(object):
     try:
         json.loads(object)
@@ -85,17 +102,86 @@ def is_json_str(object):
     return True
 
 
-def generate_request_item(method, query, title, row, the_assert):
-    query_list = get_query_list(query)
-
+def generate_request_item(header, method, title, row, the_assert, extract):
     raw = dict()
-    for i in range(5, len(row)):
+    querys_items = []
+    for i in range(6, len(row)):
         value = row[i]
         if is_json_str(value):
             value = json.loads(value) # 如果是json字符串，转成json对象
         raw[title[i]] = value
 
+    for i in range(6, len(row)):
+        qname = title[i]
+        qvalue = row[i]
+        query_item = OrderedDict([
+            ("contentType","text/plain"),
+            ("enable",True),
+            ("encode", True),
+            ("file",False),
+            ("required",True),
+            ("type","text"),
+            ("valid", False),
+            ("name",qname),
+            ("value",qvalue)
+        ])
+        querys_items.append(query_item)
+
+    if method == "POST":
+        querys_items = OrderedDict([
+            ("contentType", "text/plain"),
+            ("enable", True),
+            ("encode", True),
+            ("file", False),
+            ("required", True),
+            ("type", "text"),
+            ("valid", False),
+            ("name", ""),
+            ("value", "")
+        ])
+    else:
+        raw = ""
+
+
     assert_list = get_assert_list(the_assert)
+    # 每一个header
+    header_items = []
+    for row_num in range(0, len(header)):
+        header_item = generate_header_item(header[row_num])
+        header_items.append(header_item)
+
+    # 每一个提取
+    extract_items = []
+    for row_num in range(0, len(extract)):
+        extract_item = generate_extract_item_null()
+        extract_items.append(extract_item)
+
+    item1 = OrderedDict([
+        ("name",row[2]),
+        ("priority",row[5]),
+        ("request",{
+        "type": "HTTPSamplerProxy",
+        "hashTree": [
+            {
+                "type": "JSR223PreProcessor",
+                "jsonPath": assert_list
+            },
+            {
+                "type": "Extract",
+                "json": extract_items
+            }
+        ],
+        "headers": header_items,
+        "body": {
+            "raw": json.dumps(raw, indent=4, ensure_ascii=False),
+            "type": "JSON"
+
+        },
+        "arguments": querys_items
+    })
+    ])
+
+
 
     # itest平台原因，需要保持request顺序才能正常解析
     item = OrderedDict([
@@ -107,7 +193,7 @@ def generate_request_item(method, query, title, row, the_assert):
         }),
         ("url", row[1]),
         ("method", method),
-        ("parameters", query_list),
+        ("parameters",method ),
         ("headers", [{
             "enable": True,
             "encode": True,
@@ -135,38 +221,30 @@ def generate_request_item(method, query, title, row, the_assert):
             "xml": False
         })
     ])
-    return item
+    return item1
 
 
-def generate(result_json, require_items, output_dir):
+def generate(result_json, output_dir):
     method = result_json['method']
-    query = result_json['query']
     header = result_json['header']
     case_list = result_json['case_list']
     normal_assert = result_json['normal_assert']
     fail_assert = result_json['fail_assert']
-
+    extract = result_json['extract']
     # 读取itest导出的json文件
     itest_json = read_itest_json(get_cur_dir()+'/itest_template.json')
 
-    # 每一个header
-    header_items = []
-    for row_num in range(0, len(header)):
-        header_item = generate_header_item(header[row_num])
-        header_items.append(header_item)
-        itest_json['scenarios'][0]['headers'] = header_items
+
 
     # 每一条case
     case_items = list()
-    if require_items:
-        case_items.extend(require_items)
 
     for row_num in range(1, len(case_list)):
         is_normal = row_num == 1
         the_assert = normal_assert if is_normal else fail_assert
-        case_item = generate_request_item(method, query, case_list[0], case_list[row_num], the_assert)
+        case_item = generate_request_item(header, method, case_list[0], case_list[row_num], the_assert, extract)
         case_items.append(case_item)
-        itest_json['scenarios'][0]['requests'] = case_items # itest格式item数组下只取1个元素
+        itest_json = case_items # itest格式item数组下只取1个元素
 
     # 写文件
     itest_json_str = json.dumps(itest_json, indent=4, ensure_ascii=False)

@@ -1,135 +1,64 @@
-{
-	"scenarios": [{
-		"headers": [
-			{
-				"name": "header变量[脚本写入]",
-				"value": "header值[脚本写入]",
-				"enable": true,
-				"encode": true,
-				"file": false,
-				"required": true,
-				"valid": true
-			}
-		],
-		"requests": [{
-			"type": "HTTP",
-			"name": "登录接口名[脚本写入]",
-			"enable": true,
-			"assertions": {
-				"jsonPath": [
-					{
-						"type": "JSON",
-						"expression": "字段表达式[脚本写入]",
-						"expect": "预期结果[脚本写入]",
-						"description": "自定义描述[脚本写入]"
-					}
-				]
-			},
-			"extract": {
-				"json": [
-					{
-						"type": "JSONPath",
-						"variable": "变量名[脚本写入]",
-						"value": "变量值[脚本写入]",
-						"expression": "表达式[脚本写入]"
-					}
-				]
-			},
-			"url": "接口路径[脚本写入]",
-			"method": "POST",
-			"parameters": [{
-				"name": "query参数名[脚本写入]",
-				"value": "query参数值[脚本写入]",
-				"type": "text",
-				"enable": true,
-				"contentType": "text/plain",
-				"encode": true,
-				"file": false,
-				"required": true,
-				"valid": true
-			}
+[
+	{
+		"name": "所有参数都正确[脚本写入]",
+		"priority": "P0",
+		"request": {
+			"type":"HTTPSamplerProxy",
+			"hashTree": [
+				{
+					 "type":"JSR223PreProcessor",
+					"jsonPath": [
+						{
+							"type": "JSON",
+							"expression": "断言的表达式[脚本写入]",
+							"expect": "断言的预期值[脚本写入]",
+							"description": "断言的表达式 expect: 断言的预期值[脚本写入]"
+						}
+					]
+				},
+				{
+					"type":"Extract",
+					"json": [
+						{
+							"type": "JSONPath",
+							"variable": "token[脚本写入]",
+							"value": "${token}[脚本写入]",
+							"expression": "token的表达式[脚本写入]"
+						}
+					]
+				}
 			],
 			"headers": [
 				{
-					"name": "变量名称[脚本写入]",
-					"value": "变量值[脚本写入]",
+					"contentType": "",
+					"description": "",
 					"enable": true,
 					"encode": true,
 					"file": false,
+					"name": "Content-Type[脚本写入]",
 					"required": true,
-					"valid": true
+					"valid": true,
+					"value": "application/json[脚本写入]"
 				}
 			],
 			"body": {
-				"type": "Raw",
-				"raw": "参数[脚本写入]",
-				"kvs": [
-					{
-						"type": "text",
-						"enable": true,
-						"contentType": "text/plain",
-						"encode": true,
-						"file": false,
-						"required": true,
-						"valid": false
-					}
-				],
-				"format": "text",
-				"json": false,
-				"kV": false,
-				"oldKV": false,
-				"valid": true,
-				"xml": false
-			}
-		},{
-			"type": "HTTP",
-			"name": "场景名称[脚本写入]",
-			"enable": true,
-			"assertions": {
-				"jsonPath": [{
-					"type": "JSON",
-					"expression": "字段表达式[脚本写入]",
-					"expect": "预期结果[脚本写入]",
-					"description": "自定义描述[脚本写入]"
-				}]
+				"raw": "{\n    \"teacherId\": 0.0,\n    \"axgStudentIds\": [\n        \n    ],\n    \"enableAudio\": 0,\n    \"roomId\": 0.0\n}[脚本写入]",
+				"type": "JSON"
+
 			},
-			"url": "接口路径[脚本写入]",
-			"method": "POST",
-			"parameters": [{
-				"type": "text",
-				"enable": true,
-				"contentType": "text/plain",
-				"encode": true,
-				"file": false,
-				"required": true,
-				"valid": false
-			}],
-			"headers": [{
-				"enable": true,
-				"encode": true,
-				"file": false,
-				"required": true,
-				"valid": false
-			}],
-			"body": {
-				"type": "Raw",
-				"raw": "参数[脚本写入]",
-				"kvs": [{
-					"type": "text",
-					"enable": true,
+			"arguments": [
+				{
 					"contentType": "text/plain",
+					"enable": true,
 					"encode": true,
 					"file": false,
 					"required": true,
-					"valid": false
-				}],
-				"format": "json",
-				"json": false,
-				"kV": false,
-				"oldKV": true,
-				"valid": false,
-				"xml": false
-			}
-		}]
-	}]
-}
+					"type": "text",
+					"valid": false,
+					"name": "query参数[脚本写入]",
+					"value": "query参数的值[脚本写入]"
+				}
+			]
+		}
+	}
+]

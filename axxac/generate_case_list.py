@@ -33,7 +33,7 @@ def get_src_file(case_dir):
     return ''
 
 def generate(cases_dir, output_dir):
-    origin_header = ['接口名称', '接口', '测试场景', '是否完成', '编写完成日期']
+    origin_header = ['接口名称', '接口', '测试场景', '是否完成', '编写完成日期','优先级']
     header = []
     header.extend(origin_header)
     case_list = [header]
@@ -41,14 +41,14 @@ def generate(cases_dir, output_dir):
     api_name = src_json['name']
     url = src_json['url']
     method = src_json['method']
-    query = src_json['query']
     body = src_json['body']
     request_header = src_json['header']
     normal_assert = src_json['normal_assert']
     fail_assert = src_json['fail_assert']
+    extract = src_json['extract']
 
     normal_values = get_normal_values(body)
-    param_parts = [['所有参数都正确', normal_values]]  # 第一个元素为场景名
+    param_parts = [['所有参数都正确','P0', normal_values]]  # 第一个元素为场景名
 
     for i in range(len(body)):
         param = body[i]
@@ -62,7 +62,7 @@ def generate(cases_dir, output_dir):
             error_values = []
             error_values.extend(normal_values)
             error_values[i] = error_value
-            param_parts.append([str(name)+'='+str(error_value), error_values])  # 第一个元素为场景名
+            param_parts.append([str(name)+'='+str(error_value), 'P1', error_values])  # 第一个元素为场景名
 
     for i in range(len(param_parts)):
         param = param_parts[i]
@@ -72,7 +72,8 @@ def generate(cases_dir, output_dir):
         row.append(param[0])  # 场景名
         row.append('true')
         row.append(time.strftime('%Y-%m-%d', time.localtime()))
-        row.extend(param[1])
+        row.append(param[1])
+        row.extend(param[2])
         case_list.append(row)
 
     # 写excel
@@ -85,10 +86,10 @@ def generate(cases_dir, output_dir):
     result_json = {
         "case_list": case_list,
         "method": method,
-        "query": query,
         "header": request_header,
         "normal_assert": normal_assert,
-        "fail_assert": fail_assert
+        "fail_assert": fail_assert,
+        "extract": extract
     }
     return result_json
 

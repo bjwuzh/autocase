@@ -59,22 +59,30 @@ def get_assert(sheet):
     return assert_rows
 
 
+def get_extract(sheet):
+    extract_rows = []
+    for row_num in range(1, sheet.nrows):
+        row_values = sheet.row_values(row_num)
+        extract_rows.append(row_values)
+    return extract_rows
+
+
 def read_excel(excel_file):
     data = xlrd.open_workbook(excel_file)
     cfg_sheet = data.sheet_by_index(0)
-    query_sheet = data.sheet_by_index(1)
-    header_sheet = data.sheet_by_index(2)
-    body_sheet = data.sheet_by_index(3)
-    assert_normal_sheet = data.sheet_by_index(4)
-    assert_fail_sheet = data.sheet_by_index(5)
+    header_sheet = data.sheet_by_index(1)
+    body_sheet = data.sheet_by_index(2)
+    assert_normal_sheet = data.sheet_by_index(3)
+    assert_fail_sheet = data.sheet_by_index(4)
+    extract_sheet = data.sheet_by_index(5)
 
     result_json = dict()
     result_json["name"] = get_name(cfg_sheet)
     result_json["url"] = get_url(cfg_sheet)
     result_json["method"] = get_method(cfg_sheet)
-    result_json["query"] = get_query(query_sheet)
     result_json["header"] = get_header(header_sheet)
     result_json["body"] = get_body(body_sheet)
     result_json["normal_assert"] = get_assert(assert_normal_sheet)
     result_json["fail_assert"] = get_assert(assert_fail_sheet)
+    result_json["extract"] = get_extract(extract_sheet)
     return result_json

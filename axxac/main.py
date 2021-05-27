@@ -34,6 +34,5 @@ if __name__ == '__main__':
     execute("../data", "../output/")
     # run(sys.argv, HELP)
 
-
 def cmdexe():
     run(sys.argv, HELP)
