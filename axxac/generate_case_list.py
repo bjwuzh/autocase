@@ -62,7 +62,7 @@ def generate(cases_dir, output_dir):
             error_values = []
             error_values.extend(normal_values)
             error_values[i] = error_value
-            param_parts.append([str(name)+'='+str(error_value), 'P1', error_values])  # 第一个元素为场景名
+            param_parts.append([str(name)+'='+str(error_value), 'P2', error_values])  # 第一个元素为场景名
 
     for i in range(len(param_parts)):
         param = param_parts[i]

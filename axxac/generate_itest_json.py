@@ -63,13 +63,15 @@ def get_assert_list(the_assert):
 
 def generate_header_item(row):
     request_item = OrderedDict([
-        ("name", row[0]),
-        ("value", row[1]),
-        ("enable", True),
+        ("contentType",""),
+        ("description", ""),
+        ("enable",True),
         ("encode", True),
         ("file", False),
-        ("required", True),
-        ("valid", True)
+        ("name", row[0]),
+        ("required",True),
+        ( "valid", True),
+        ("value",  row[1])
     ])
     return request_item
 
@@ -111,24 +113,8 @@ def generate_request_item(header, method, title, row, the_assert, extract):
             value = json.loads(value) # 如果是json字符串，转成json对象
         raw[title[i]] = value
 
-    for i in range(6, len(row)):
-        qname = title[i]
-        qvalue = row[i]
-        query_item = OrderedDict([
-            ("contentType","text/plain"),
-            ("enable",True),
-            ("encode", True),
-            ("file",False),
-            ("required",True),
-            ("type","text"),
-            ("valid", False),
-            ("name",qname),
-            ("value",qvalue)
-        ])
-        querys_items.append(query_item)
-
     if method == "POST":
-        querys_items = OrderedDict([
+        query_item2 = OrderedDict([
             ("contentType", "text/plain"),
             ("enable", True),
             ("encode", True),
@@ -139,8 +125,27 @@ def generate_request_item(header, method, title, row, the_assert, extract):
             ("name", ""),
             ("value", "")
         ])
+        querys_items.append(query_item2)
     else:
         raw = ""
+        for i in range(6, len(row)):
+            qname = title[i]
+            qvalue = row[i]
+            query_item1 = OrderedDict([
+                ("contentType", "text/plain"),
+                ("enable", True),
+                ("encode", True),
+                ("file", False),
+                ("required", True),
+                ("type", "text"),
+                ("valid", False),
+                ("name", qname),
+                ("value", qvalue)
+            ])
+            querys_items.append(query_item1)
+
+
+
 
 
     assert_list = get_assert_list(the_assert)
@@ -163,20 +168,52 @@ def generate_request_item(header, method, title, row, the_assert, extract):
         "type": "HTTPSamplerProxy",
         "hashTree": [
             {
-                "type": "JSR223PreProcessor",
-                "jsonPath": assert_list
+                "type": "Assertions",
+                "text": [
+
+                ],
+                "regex": [
+
+                ],
+                "jsonPath": assert_list,
+                 "jsr223": [
+
+                      ],
+                "xpath2": [
+
+                ],
+                "duration": {
+                "type": "Duration"
+                },
+                "enable": True,
+                "name": "断言的名字",
+                "active": True
             },
             {
                 "type": "Extract",
-                "json": extract_items
+                "regex": [
+
+                ],
+                "json": extract_items,
+                "xpath": [
+
+                ],
+                "enable": True,
+                "name": "提取的名字",
+                "active": True
             }
         ],
+        "customizeReq": False,
         "headers": header_items,
         "body": {
             "raw": json.dumps(raw, indent=4, ensure_ascii=False),
-            "type": "JSON"
+            "type": "JSON",
+            "valid": True,
+            "xml": False
 
         },
+        "followRedirects": False,
+        "doMultipartPost": False,
         "arguments": querys_items
     })
     ])
