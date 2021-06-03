@@ -262,6 +262,7 @@ def generate_request_item(header, method, title, row, the_assert, extract):
 
 
 def generate(result_json, output_dir):
+    casename = result_json["name"]
     method = result_json['method']
     header = result_json['header']
     case_list = result_json['case_list']
@@ -286,7 +287,7 @@ def generate(result_json, output_dir):
     # 写文件
     itest_json_str = json.dumps(itest_json, indent=4, ensure_ascii=False)
     output_dir = get_output_dir(output_dir)
-    path = output_dir +'/itest.json'
+    path = output_dir +'/'+casename+'itest.json'
     with open(path, 'w', encoding='utf-8') as file:
         file.write(itest_json_str)
     print("iTest JSON文件已生成："+os.path.abspath(path))

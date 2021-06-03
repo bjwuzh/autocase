@@ -77,14 +77,15 @@ def generate(cases_dir, output_dir):
         case_list.append(row)
 
     # 写excel
-    output_dir = get_output_dir(output_dir)
-    path = output_dir+'/case_list.xls'
-    write_excel_xls(path, 'sheet1', case_list)
-    print("\n测试用例表格已生成："+os.path.abspath(path)+"\n")
+    # output_dir = get_output_dir(output_dir)
+    # path = output_dir+'/case_list.xls'
+    # write_excel_xls(path, 'sheet1', case_list)
+    # print("\n测试用例表格已生成："+os.path.abspath(path)+"\n")
 
     # 加上请求方法、请求头、断言信息，用于itest json生成
     result_json = {
         "case_list": case_list,
+        "name":api_name,
         "method": method,
         "header": request_header,
         "normal_assert": normal_assert,
