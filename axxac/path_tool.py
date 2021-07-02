@@ -2,9 +2,9 @@
 import os
 
 
-def get_cur_dir():
-    return os.path.dirname(__file__)
-
+# def get_cur_dir():
+#     return os.path.dirname(__file__)
+#
 
 def get_output_dir(output_dir):
     if not output_dir or os.path.isfile(output_dir):

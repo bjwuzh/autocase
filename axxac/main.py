@@ -30,9 +30,11 @@ def run(argv, help_info):
     execute(input_dir, output_dir)
 
 
-if __name__ == '__main__':
-    execute("../data", "../output/")
-    # run(sys.argv, HELP)
+
 
 def cmdexe():
     run(sys.argv, HELP)
+
+if __name__ == '__main__':
+    execute("../data", "../output/")
+    # run(sys.argv, HELP)

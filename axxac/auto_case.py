@@ -1,8 +1,8 @@
 # coding=utf-8
-from axxac.generate_case_list import generate as clg
-from axxac.generate_itest_json import generate as ijg
-from axxac.require import generate_require_items
+import axxac.generate_case_list as clg
+import  axxac.generate_itest_json as ijg
+
 
 def execute(input_dir, output_dir):
-    case_result_json = clg(input_dir, output_dir)
-    ijg(case_result_json, output_dir)
+    case_result_json = clg.GenerateCase.generate(input_dir)
+    ijg.Generatejson.generate(case_result_json, output_dir)
